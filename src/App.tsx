@@ -4,8 +4,8 @@ import "./App.css";
 import { Amplify } from "aws-amplify";
 import { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
-//import outputs from "../amplify_outputs.json";
-const outputs = require("../amplify_outputs.json");
+import outputs from "../amplify_outputs.json";
+//const outputs = require("../amplify_outputs.json");
 
 import "@aws-amplify/ui-react/styles.css";
 
