@@ -7,11 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "start": "craco start",
-    "build": "craco build",
-    "test": "craco test",
-    "eject": "react-scripts eject"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^6.3.0",
