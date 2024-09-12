@@ -1,15 +1,17 @@
 import { FormEvent, useState } from "react";
+import { Loader, Placeholder } from "@aws-amplify/ui-react";
 import "./App.css";
 import { Amplify } from "aws-amplify";
-import { Auth } from "@aws-amplify/auth";
+import { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 import outputs from "../amplify_outputs.json";
+//const outputs = require("../amplify_outputs.json");
 
 import "@aws-amplify/ui-react/styles.css";
 
 Amplify.configure(outputs);
 
-const amplifyClient = generateClient({
+const amplifyClient = generateClient<Schema>({
   authMode: "userPool",
 });
 
@@ -24,11 +26,8 @@ function App() {
     try {
       const formData = new FormData(event.currentTarget);
       
-      const { data, errors } = await amplifyClient.query({
-        query: "askBedrock",
-        variables: {
-          ingredients: [formData.get("ingredients")?.toString() || ""],
-        },
+      const { data, errors } = await amplifyClient.queries.askBedrock({
+        ingredients: [formData.get("ingredients")?.toString() || ""],
       });
 
       if (!errors) {
@@ -45,18 +44,20 @@ function App() {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await Auth.signOut();
-      // Optionally, you can redirect the user to a login page or the home page
-      // window.location.href = '/login';
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
-
   return (
     <div className="app-container">
+      <div className="header-container">
+        <h1 className="main-header">
+          Meet Your Personal
+          <br />
+          <span className="highlight">Recipe AI</span>
+        </h1>
+        <p className="description">
+          Simply type a few ingredients using the format ingredient1,
+          ingredient2, etc., and Recipe AI will generate an all-new recipe on
+          demand...
+        </p>
+      </div>
       <form onSubmit={onSubmit} className="form-container">
         <div className="search-container">
           <input
@@ -75,14 +76,15 @@ function App() {
         {loading ? (
           <div className="loader-container">
             <p>Loading...</p>
+            <Loader size="large" />
+            <Placeholder size="large" />
+            <Placeholder size="large" />
+            <Placeholder size="large" />
           </div>
         ) : (
           result && <p className="result">{result}</p>
         )}
       </div>
-      <button className="logout-button" onClick={handleLogout}>
-        Logout
-      </button>
     </div>
   );
 }
