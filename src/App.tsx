@@ -1,7 +1,7 @@
 import { FormEvent, useState } from "react";
 import { Loader, Placeholder } from "@aws-amplify/ui-react";
 import "./App.css";
-import { Amplify } from "aws-amplify";
+import { Amplify, Auth } from "aws-amplify";
 import { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 import outputs from "../amplify_outputs.json";
@@ -41,6 +41,16 @@ function App() {
       alert(`An error occurred: ${e}`);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await Auth.signOut();
+      // Optionally, you can redirect the user to a login page or the home page
+      window.location.href = '/login';
+    } catch (error) {
+      console.error('Error signing out:', error);
     }
   };
 
@@ -85,6 +95,9 @@ function App() {
           result && <p className="result">{result}</p>
         )}
       </div>
+      <button className="logout-button" onClick={handleLogout}>
+        Logout
+      </button>
     </div>
   );
 }
