@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react";
 import "./App.css";
-import { Amplify, Auth } from "aws-amplify";
+import { Amplify } from "aws-amplify";
+import { Auth } from "@aws-amplify/auth";
 import { generateClient } from "aws-amplify/data";
 import outputs from "../amplify_outputs.json";
 
@@ -13,8 +14,8 @@ const amplifyClient = generateClient({
 });
 
 function App() {
-  const [_, setResult] = useState<string>("");
-  const [__, setLoading] = useState(false);
+  const [result, setResult] = useState<string>("");
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -23,8 +24,11 @@ function App() {
     try {
       const formData = new FormData(event.currentTarget);
       
-      const { data, errors } = await amplifyClient.queries.askBedrock({
-        ingredients: [formData.get("ingredients")?.toString() || ""],
+      const { data, errors } = await amplifyClient.query({
+        query: "askBedrock",
+        variables: {
+          ingredients: [formData.get("ingredients")?.toString() || ""],
+        },
       });
 
       if (!errors) {
@@ -53,7 +57,29 @@ function App() {
 
   return (
     <div className="app-container">
-      {/* Existing code */}
+      <form onSubmit={onSubmit} className="form-container">
+        <div className="search-container">
+          <input
+            type="text"
+            className="wide-input"
+            id="ingredients"
+            name="ingredients"
+            placeholder="Ingredient1, Ingredient2, Ingredient3,...etc"
+          />
+          <button type="submit" className="search-button">
+            Generate
+          </button>
+        </div>
+      </form>
+      <div className="result-container">
+        {loading ? (
+          <div className="loader-container">
+            <p>Loading...</p>
+          </div>
+        ) : (
+          result && <p className="result">{result}</p>
+        )}
+      </div>
       <button className="logout-button" onClick={handleLogout}>
         Logout
       </button>
